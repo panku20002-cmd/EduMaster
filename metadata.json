@@ -1,0 +1,33 @@
+{
+  "name": "Education Master",
+  "short_name": "EduMaster",
+  "version": "1.0.0",
+  "build_id": "RELEASE-2023-10-27-GOLD",
+  "description": "The complete, secure, and AI-powered Learning Management System. Features AI Tutor, Attendance Geo-fencing, and Parent Linking.",
+  "categories": [
+    "Education",
+    "Productivity"
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#4F46E5",
+  "background_color": "#F8FAFC",
+  "icons": [
+    {
+      "src": "https://api.dicebear.com/7.x/initials/svg?seed=EM&backgroundColor=4F46E5",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "https://api.dicebear.com/7.x/initials/svg?seed=EM&backgroundColor=4F46E5",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
