@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { EmojiCharacter } from './components/EmojiCharacter';
 import { LoginForm } from './components/LoginForm';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -7,19 +7,46 @@ import { StudentDashboard } from './components/StudentDashboard';
 import { TeacherDashboard } from './components/TeacherDashboard';
 import { ParentDashboard } from './components/ParentDashboard';
 import { AttendanceGate } from './components/AttendanceGate'; 
-import { FeedbackWidget } from './components/FeedbackWidget'; // Imported
+import { FeedbackWidget } from './components/FeedbackWidget';
 import { EmojiMood, UserRole } from './types';
 import { motion } from 'framer-motion';
+import { getSession, saveSession, clearSession } from './utils/auth';
 
 const App: React.FC = () => {
   const [mood, setMood] = useState<EmojiMood>(EmojiMood.IDLE);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState<UserRole>('student');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 1. Restore Session on Load
+  useEffect(() => {
+    const savedRole = getSession();
+    if (savedRole) {
+      setUserRole(savedRole);
+      setIsAuthenticated(true);
+    }
+    setIsLoading(false);
+  }, []);
 
   const handleLoginSuccess = (role: UserRole) => {
+      saveSession(role); // Persist session
       setUserRole(role);
       setIsAuthenticated(true);
   };
+
+  // Helper to handle logout safely
+  const handleLogout = () => {
+      clearSession();
+      setIsAuthenticated(false);
+      setUserRole('student');
+      window.location.reload(); // Clean state reset
+  };
+
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>;
+  }
 
   // --- ROUTING LOGIC ---
 
@@ -27,6 +54,7 @@ const App: React.FC = () => {
       return (
           <>
             <AttendanceGate userRole={userRole}>
+                {/* 2. Security Guards: Strict Rendering */}
                 {userRole === 'admin' && <AdminDashboard />}
                 {userRole === 'student' && <StudentDashboard />}
                 {userRole === 'teacher' && <TeacherDashboard />}

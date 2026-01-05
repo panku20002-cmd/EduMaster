@@ -17,7 +17,8 @@ import { NotificationCenter } from './NotificationCenter';
 import { AIPerformancePanel } from './AIPerformancePanel';
 import { AISolverPanel } from './AISolverPanel';
 import { WeeklyQuizPanel } from './WeeklyQuizPanel';
-import { SecuritySettings } from './SecuritySettings'; // Imported
+import { SecuritySettings } from './SecuritySettings'; 
+import { clearSession } from '../utils/auth';
 
 type StudentView = 'dashboard' | 'courses' | 'explore' | 'assignments' | 'quizzes' | 'live' | 'progress' | 'certificates' | 'profile' | 'analytics' | 'fees' | 'library' | 'ai-insights' | 'ai-solver' | 'weekly-quiz' | 'security';
 
@@ -40,6 +41,11 @@ export const StudentDashboard: React.FC = () => {
   const handleReject = (id: string) => {
       // API call to reject would go here
       setPendingRequests(prev => prev.filter(r => r.id !== id));
+  };
+
+  const handleLogout = () => {
+      clearSession();
+      window.location.reload();
   };
 
   return (
@@ -78,7 +84,7 @@ export const StudentDashboard: React.FC = () => {
             <NavItem icon={<User size={20} />} label="Profile" active={activeView === 'profile'} onClick={() => setActiveView('profile')} />
             <NavItem icon={<Shield size={20} />} label="Security & Privacy" active={activeView === 'security'} onClick={() => setActiveView('security')} />
             <button 
-                onClick={() => window.location.reload()} 
+                onClick={handleLogout} 
                 className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-500 hover:bg-red-50 rounded-xl transition-colors"
             >
                 <LogOut size={20} />

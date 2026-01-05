@@ -7,7 +7,8 @@ import {
     ChevronDown, Lock, Zap, Shield
 } from 'lucide-react';
 import { MOCK_COURSES, MOCK_PARENT_STATS, MOCK_ASSIGNMENTS, MOCK_QUIZZES, MOCK_CERTIFICATES, MOCK_ATTENDANCE, MOCK_ANNOUNCEMENTS } from '../constants';
-import { SecuritySettings } from './SecuritySettings'; // Imported
+import { SecuritySettings } from './SecuritySettings'; 
+import { clearSession } from '../utils/auth';
 
 type ParentView = 'dashboard' | 'child-overview' | 'courses' | 'attendance' | 'results' | 'assignments' | 'certificates' | 'announcements' | 'profile' | 'weekly-progress' | 'security';
 
@@ -44,6 +45,11 @@ export const ParentDashboard: React.FC = () => {
           setShowAddChildModal(false);
           alert(`Request sent to student with ID ${newChildEnrollment}. Waiting for their approval.`);
       }
+  };
+
+  const handleLogout = () => {
+      clearSession();
+      window.location.reload();
   };
 
   const activeChildren = childrenList.filter(c => c.status === 'active');
@@ -132,7 +138,7 @@ export const ParentDashboard: React.FC = () => {
             <NavItem icon={<User size={20} />} label="Profile & Settings" active={activeView === 'profile'} onClick={() => setActiveView('profile')} />
             <NavItem icon={<Shield size={20} />} label="Security" active={activeView === 'security'} onClick={() => setActiveView('security')} />
             <button 
-                onClick={() => window.location.reload()} 
+                onClick={handleLogout} 
                 className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-500 hover:bg-red-50 rounded-xl transition-colors"
             >
                 <LogOut size={20} />

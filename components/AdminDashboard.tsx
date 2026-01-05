@@ -17,11 +17,17 @@ import { LiveMonitoringPanel } from './LiveMonitoringPanel';
 import { AdminFeedbackManager } from './AdminFeedbackManager';
 import { CostControlPanel } from './CostControlPanel';
 import { ProductRoadmap } from './ProductRoadmap'; 
+import { clearSession } from '../utils/auth';
 
 type View = 'overview' | 'students' | 'teachers' | 'courses' | 'approvals' | 'reports' | 'finance' | 'settings' | 'library' | 'checklist' | 'schools' | 'security' | 'devops' | 'monitoring' | 'feedback' | 'cost' | 'roadmap';
 
 export const AdminDashboard: React.FC = () => {
   const [currentView, setCurrentView] = useState<View>('overview');
+
+  const handleLogout = () => {
+      clearSession();
+      window.location.reload();
+  };
 
   return (
     <div className="flex h-screen bg-slate-100 font-sans text-slate-900">
@@ -59,7 +65,7 @@ export const AdminDashboard: React.FC = () => {
         </nav>
 
         <div className="p-4 border-t border-slate-800">
-            <button onClick={() => window.location.reload()} className="flex items-center gap-2 w-full px-3 py-2 text-red-400 hover:bg-red-900/20 hover:text-red-300 rounded-md transition-colors text-sm font-medium">
+            <button onClick={handleLogout} className="flex items-center gap-2 w-full px-3 py-2 text-red-400 hover:bg-red-900/20 hover:text-red-300 rounded-md transition-colors text-sm font-medium">
                 <LogOut size={16} /> Logout Securely
             </button>
         </div>

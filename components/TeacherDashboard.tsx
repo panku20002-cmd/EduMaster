@@ -9,12 +9,18 @@ import { MOCK_COURSES, MOCK_TEACHER_STATS, MOCK_ENROLLED_STUDENTS, MOCK_SCHEDULE
 import { AttendanceAnalytics } from './AttendanceAnalytics';
 import { TeacherSalaryPanel } from './FinanceComponents';
 import { DigitalLibrary } from './LibraryComponents';
-import { SecuritySettings } from './SecuritySettings'; // Imported
+import { SecuritySettings } from './SecuritySettings'; 
+import { clearSession } from '../utils/auth';
 
 type TeacherView = 'dashboard' | 'courses' | 'create-course' | 'live' | 'assignments' | 'students' | 'attendance' | 'analytics' | 'salary' | 'profile' | 'library' | 'security';
 
 export const TeacherDashboard: React.FC = () => {
   const [activeView, setActiveView] = useState<TeacherView>('dashboard');
+
+  const handleLogout = () => {
+      clearSession();
+      window.location.reload();
+  };
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-800">
@@ -49,7 +55,7 @@ export const TeacherDashboard: React.FC = () => {
             <NavItem icon={<Settings size={20} />} label="Settings" active={activeView === 'profile'} onClick={() => setActiveView('profile')} />
             <NavItem icon={<Shield size={20} />} label="Security" active={activeView === 'security'} onClick={() => setActiveView('security')} />
             <button 
-                onClick={() => window.location.reload()} 
+                onClick={handleLogout} 
                 className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-500 hover:bg-red-50 rounded-xl transition-colors"
             >
                 <LogOut size={20} />

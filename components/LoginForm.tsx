@@ -4,6 +4,7 @@ import { Eye, EyeOff, User, Lock, Check, ShieldCheck, Smartphone, Mail, ArrowRig
 import { motion, AnimatePresence } from 'framer-motion';
 import { EmojiMood, UserRole } from '../types';
 import { LegalModal } from './LegalModal';
+import { validateAdminLogin } from '../utils/auth';
 
 interface LoginFormProps {
   onStateChange: (mood: EmojiMood) => void;
@@ -20,6 +21,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onStateChange, onLoginSucc
   const [selectedRole, setSelectedRole] = useState<UserRole>('student');
   const [loginMethod, setLoginMethod] = useState<LoginMethod>('email');
   const [legalType, setLegalType] = useState<'privacy' | 'terms' | null>(null);
+  const [loginError, setLoginError] = useState('');
   
   // -- Form Fields --
   const [fullName, setFullName] = useState('');
@@ -157,6 +159,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onStateChange, onLoginSucc
 
   const handleSwitchMode = (mode: AuthMode) => {
       setAuthMode(mode);
+      setLoginError('');
       if (mode === 'signup') {
           setStep('role_selection');
       } else {
@@ -170,9 +173,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onStateChange, onLoginSucc
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginError('');
+
     if (authMode === 'admin_login') {
-        // In real app: Validate against Admin DB
-        if(isEmailLoginValid) onLoginSuccess('admin');
+        // --- SECURE ADMIN AUTH ---
+        const isValid = validateAdminLogin(username, password);
+        if (isValid) {
+            onLoginSuccess('admin');
+        } else {
+            setLoginError('Access Denied. Invalid Admin Credentials.');
+            onStateChange(EmojiMood.CONFUSED);
+        }
     }
     else if((authMode === 'login' && isLoginValid) || (authMode === 'signup' && isSignupValid)) {
         const roleToLogin = authMode === 'signup' ? selectedRole : selectedRole; 
@@ -194,6 +205,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onStateChange, onLoginSucc
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                  {loginError && (
+                      <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded text-xs font-mono text-center">
+                          {loginError}
+                      </div>
+                  )}
                   <div>
                       <label className="text-xs font-bold uppercase tracking-wider mb-2 block text-slate-500">Admin ID</label>
                       <div className="relative">
@@ -203,7 +219,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onStateChange, onLoginSucc
                             value={username} 
                             onChange={(e) => setUsername(e.target.value)} 
                             className="w-full bg-slate-800 border border-slate-700 text-white rounded-md py-2.5 pl-10 pr-4 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 font-mono text-sm" 
-                            placeholder="ADMIN-001"
+                            placeholder="ADMIN-ID"
                           />
                       </div>
                   </div>
